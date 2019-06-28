@@ -5,15 +5,14 @@ output:
         keep_md: true
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 \  
 
 ### Loading and preprocessing the data
 The following code loads and reformats the date column of our data
-```{r load, echo=TRUE, message=FALSE}
+
+```r
 library(lubridate)
 setwd("C://Users//HaaseE//Documents//R Projects//repdata_data_activity")
 activity <- read.csv(file="activity.csv", header=TRUE)
@@ -26,7 +25,8 @@ activity$date <- ymd(activity$date)
 ### What is the mean total number of steps taken per day?  
 
 - **Calculate the total number of steps taken per day and create a histogram of the data: **
-```{r dailySteps, echo=TRUE}
+
+```r
 library(ggplot2)
 library(gridExtra)
 
@@ -38,12 +38,26 @@ plt <- ggplot(stepsByDate, aes(x=steps)) +
 plt
 ```
 
+![](PA1_template_files/figure-html/dailySteps-1.png)<!-- -->
+
 - **Calculate and report the mean and median of the total number of steps taken per day: **
-```{r meanAndMedianSteps, echo=TRUE}
+
+```r
 medianSteps <- median(stepsByDate$steps)
 meanSteps <- mean(stepsByDate$steps)
 print(paste('Median number of steps: ', medianSteps), quote=FALSE)
+```
+
+```
+## [1] Median number of steps:  10765
+```
+
+```r
 print(paste('Mean number of steps: ', round(meanSteps, digits=2)), quote=FALSE)
+```
+
+```
+## [1] Mean number of steps:  10766.19
 ```
 
 \  
@@ -51,8 +65,8 @@ print(paste('Mean number of steps: ', round(meanSteps, digits=2)), quote=FALSE)
 ### What is the average daily activity pattern?
 
 - **Calculate the average number of steps taken per interval across all days and create a line plot of the data: **
-```{r avgDailyActivity, echo=TRUE}
 
+```r
 avgDailyActivity <- aggregate(steps ~ interval, data=activity, mean)
 plt <- ggplot(data=avgDailyActivity, aes(x=interval, y=steps)) + 
     geom_line() +
@@ -61,23 +75,36 @@ plt <- ggplot(data=avgDailyActivity, aes(x=interval, y=steps)) +
 plt
 ```
 
+![](PA1_template_files/figure-html/avgDailyActivity-1.png)<!-- -->
+
 - **Find the interval with the maximum amount of average activity: **
-```{r maxInterval, echo=TRUE}
+
+```r
 maxInterval <- avgDailyActivity$interval[which.max(avgDailyActivity$steps)]
 print(paste('Interval with largest mean number of steps per day: ', maxInterval), quote=FALSE)
+```
+
+```
+## [1] Interval with largest mean number of steps per day:  835
 ```
 
 \  
 
 ### Imputing missing values
 - **Calculate and report the total number of observations with missing values in the dataset: **
-```{r missingValues, echo=TRUE}
+
+```r
 naCount <- sum(!complete.cases(activity))
 print(paste('Rows with missing values: ', naCount), quote=FALSE)
 ```
 
+```
+## [1] Rows with missing values:  2304
+```
+
 - **Fill in these missing values with the average of all other days' activity during that interval: **
-```{r imputeValues, echo=TRUE}
+
+```r
 naIdx <- which(is.na(activity$steps))
 activityImputed <- activity
 
@@ -88,8 +115,8 @@ for (i in naIdx) {
 ```
 
 - **Create a histogram of the total number of steps taken each day for the corrected dataset: **
-```{r plotImputed, echo=TRUE}
 
+```r
 stepsByDateImputed <- aggregate(steps ~ date, data=activityImputed, sum)
 
 plt <- ggplot(stepsByDateImputed, aes(x=steps)) + 
@@ -99,12 +126,26 @@ plt <- ggplot(stepsByDateImputed, aes(x=steps)) +
 plt
 ```
 
+![](PA1_template_files/figure-html/plotImputed-1.png)<!-- -->
+
 - **Calculate and report the mean and median of the total number of steps taken per day of corrected dataset: **
-```{r medianAndMeanStepsImputed, echo=TRUE}
+
+```r
 medianStepsImputed <- median(stepsByDateImputed$steps)
 meanStepsImputed <- mean(stepsByDateImputed$steps)
 print(paste('Median number of steps: ', medianStepsImputed), quote=FALSE)
+```
+
+```
+## [1] Median number of steps:  10762
+```
+
+```r
 print(paste('Mean number of steps: ', round(meanStepsImputed, digits=2)), quote=FALSE)
+```
+
+```
+## [1] Mean number of steps:  10765.64
 ```
 The median and mean of the total steps per day lowered due to the inclusion of imputed values for NAs rather than omitting them.
 
@@ -112,14 +153,16 @@ The median and mean of the total steps per day lowered due to the inclusion of i
 
 ### Are there differences between weekdays and weekends?
 - **Add additional variable to dataset to indicate if date is a weekday or during the weekend: **
-```{r dayType, echo=TRUE, message=FALSE}
+
+```r
 library(dplyr)
 weekday <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 activityImputed <- mutate(activityImputed, dayType = as.factor(ifelse(weekdays(date) %in% weekday, "weekday", "weekend")))
 ```
 
 - **Create a panel plot showing the average steps per interval on weekdays vs weekends: **
-```{r dayTypeComparison, echo=TRUE}
+
+```r
 avgDailyActivity <- aggregate(steps ~ interval + dayType, data=activityImputed, mean)
 
 plt1 <- ggplot(data=avgDailyActivity[avgDailyActivity$dayType=="weekday",], aes(x=interval, y=steps)) + 
@@ -136,3 +179,5 @@ plt2 <- ggplot(data=avgDailyActivity[avgDailyActivity$dayType=="weekend",], aes(
 
 grid.arrange(plt1, plt2, nrow=2)
 ```
+
+![](PA1_template_files/figure-html/dayTypeComparison-1.png)<!-- -->
