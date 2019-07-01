@@ -76,7 +76,9 @@ naCount <- sum(!complete.cases(activity))
 print(paste('Rows with missing values: ', naCount), quote=FALSE)
 ```
 
-- **Fill in these missing values with the average of all other days' activity during that interval: **
+- **Fill in these missing values with the average of all other days' activity during that interval: **     
+
+NA values will be replaced with mean steps for that interval on days for which the data was available
 ```{r imputeValues, echo=TRUE}
 naIdx <- which(is.na(activity$steps))
 activityImputed <- activity

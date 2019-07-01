@@ -255,6 +255,7 @@ print(paste('Rows with missing values: ', naCount), quote=FALSE)</code></pre>
 <ul>
 <li><strong>Fill in these missing values with the average of all other days’ activity during that interval: </strong></li>
 </ul>
+<p>NA values will be replaced with mean steps for that interval on days for which the data was available</p>
 <pre class="r"><code>naIdx &lt;- which(is.na(activity$steps))
 activityImputed &lt;- activity
 

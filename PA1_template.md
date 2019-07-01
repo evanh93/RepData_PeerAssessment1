@@ -102,7 +102,9 @@ print(paste('Rows with missing values: ', naCount), quote=FALSE)
 ## [1] Rows with missing values:  2304
 ```
 
-- **Fill in these missing values with the average of all other days' activity during that interval: **
+- **Fill in these missing values with the average of all other days' activity during that interval: **     
+
+NA values will be replaced with mean steps for that interval on days for which the data was available
 
 ```r
 naIdx <- which(is.na(activity$steps))
